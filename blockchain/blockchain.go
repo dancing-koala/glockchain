@@ -103,9 +103,32 @@ func validProof(lastProof, proof uint32) bool {
 	return strings.HasSuffix(result, "0000")
 }
 
-var (
-	hash256 = sha256.New()
-)
+func validChain(chain []Block) bool {
+
+	if len(chain) < 2 {
+		return true
+	}
+
+	lastBlock := chain[0]
+
+	for i := 1; i < len(chain); i++ {
+		block := chain[i]
+
+		if block.PreviousHash != hash(lastBlock) {
+			return false
+		}
+
+		if !validProof(lastBlock.Proof, block.Proof) {
+			return false
+		}
+
+		lastBlock = block
+	}
+
+	return true
+}
+
+var hash256 = sha256.New()
 
 func bytesToSha256Hex(data []byte) string {
 	hash256.Reset()
