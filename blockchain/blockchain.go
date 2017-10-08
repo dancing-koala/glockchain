@@ -33,12 +33,12 @@ func NewBlockchain() *Blockchain {
 		Chain:               make([]Block, 0),
 	}
 
-	b.NewBlock("1", 100)
+	b.NewBlock(100, "1")
 
 	return b
 }
 
-func (b *Blockchain) NewBlock(previousHash string, previousProof uint32) *Block {
+func (b *Blockchain) NewBlock(proof uint32, previousHash string) *Block {
 
 	var hashToUse string = previousHash
 
@@ -46,13 +46,11 @@ func (b *Blockchain) NewBlock(previousHash string, previousProof uint32) *Block 
 		hashToUse = hash(b.Chain[len(b.Chain)-1])
 	}
 
-	currentProof := proofOfWork(previousProof)
-
 	block := Block{
 		Index:        uint32(len(b.Chain) + 1),
 		Timestamp:    time.Now().UnixNano(),
 		Transactions: b.CurrentTransactions,
-		Proof:        currentProof,
+		Proof:        proof,
 		PreviousHash: hashToUse,
 	}
 
